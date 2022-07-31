@@ -237,21 +237,14 @@ int main(void)
     InitWindow(W_WIDTH, W_HEIGHT, "Who called it table tennis?");
     SetTargetFPS(60);
 
-    int slowmo = 1;
-
-    // desired frame time in milliseconds
-    float desiredFrameTime = 1000 / 60;
-
+    float targetTimeMilliseconds = 1000 / 60;
+    
     while (!WindowShouldClose())
     {
-        float deltatime = GetFrameTime() * 1000 / desiredFrameTime / slowmo;
+        // GetFrameTime to milliseconds divided by the desired milliseconds, giving a number close to one to scale things up with a bit nicer
+        float deltatime = GetFrameTime() * 1000 / targetTimeMilliseconds;
 
         // get user input
-
-        if (IsKeyDown(KEY_S))
-            slowmo = 10;
-        else
-            slowmo = 1;
 
         // move paddle right
         if (DO_AI)
@@ -259,7 +252,7 @@ int main(void)
             moveAI(&paddleRight, deltatime);
 
             // to let ai play against itself
-            // moveAI(&paddleLeft, deltatime);
+            moveAI(&paddleLeft, deltatime);
         }
         else
         {
