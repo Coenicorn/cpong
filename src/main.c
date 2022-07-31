@@ -129,6 +129,8 @@ void resolveCollision(Ball *r1, Paddle *r2)
     // calculate the collision surface on the bottom/top and on the left/right
     // make it work with differences in width and height between entities
     // begin on the left and right (so with differences in y)
+    // I wrote this function some time ago and have since
+    // completely forgotten how it works, but it seems to do fine lol
 
     if (
         r1->aabb.x + r1->aabb.width <= r2->x ||
