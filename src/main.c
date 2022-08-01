@@ -21,6 +21,8 @@
 
 // change to 1 for only right ai, 2> for left and right ai
 #define DO_AI 2
+
+// change to 1 for easier AI, won't look ahead multiple bounces
 #define AI_LOOKAHEAD 5
 
 int points1, points2, won = 0;
