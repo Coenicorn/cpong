@@ -19,7 +19,7 @@
 
 #define WIN_POINTS 11
 
-#define DO_AI 0
+#define DO_AI 1
 #define AI_LOOKAHEAD 5
 
 int points1, points2, won = 0;
