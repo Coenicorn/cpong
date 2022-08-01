@@ -19,7 +19,8 @@
 
 #define WIN_POINTS 11
 
-#define DO_AI 1
+// change to 1 for only right ai, 2> for left and right ai
+#define DO_AI 2
 #define AI_LOOKAHEAD 5
 
 int points1, points2, won = 0;
@@ -59,7 +60,7 @@ void moveAI(Paddle *p, float dt)
 
     // ball: posB + velB * i = next pos
 
-    // check at what i the x of the ball is the same as that
+    // check at what timestep (i) the x of the ball is the same as that
     // of the paddle
 
     // xB + vxB * i = xP
@@ -86,7 +87,7 @@ void moveAI(Paddle *p, float dt)
 
     for (int iter = 0; iter < AI_LOOKAHEAD; iter++)
     {
-        // do da calculation = 0, points2 = 0;
+        // do da calculation
         i = (xP - xB) / vxB;
 
         // now check the y position of the ball at that point
@@ -262,13 +263,10 @@ int main(void)
         // get user input
 
         // move paddle right
-        if (DO_AI)
-        {
+        if (DO_AI >= 1)
             moveAI(&paddleRight, deltatime);
-
-            // to let ai play against itself
+        if (DO_AI >= 2)
             moveAI(&paddleLeft, deltatime);
-        }
         else
         {
             if (IsKeyDown(KEY_UP))
@@ -283,7 +281,7 @@ int main(void)
         if (IsKeyDown(KEY_S))
             movePaddle(&paddleLeft, 1, deltatime);
 
-        if (IsKeyPressed(KEY_SPACE) && ball.velX == 0 && ball.velY == 0)
+        if ((IsKeyPressed(KEY_SPACE) || DO_AI >= 2) && ball.velX == 0 && ball.velY == 0)
         {
             if (won)
                 newGame();
