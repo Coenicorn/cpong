@@ -14,8 +14,8 @@
 #define DISTANCE_SIDE 50
 
 #define BALLSPEEDX 3
-#define BALLSPEEDY 5
-#define PADDLESPEED 5
+#define BALLSPEEDY 3
+#define PADDLESPEED 4
 
 #define WIN_POINTS 11
 
@@ -185,18 +185,18 @@ void resolveCollision(Ball *r1, Paddle *r2)
 
         // uncomment to make y velocity change based on where the
         // ball hits the paddle
-        float cY;
+        // float cY;
 
-        if (dT < dB)
-        {
-            cY = -(r2->height/2 + dT)/(P_HEIGHT/2);
-        }
-        else
-        {
-            cY = (r2->height/2 + dB)/(P_HEIGHT/2);
-        }
+        // if (dT < dB)
+        // {
+        //     cY = -(r2->height/2 + dT)/(P_HEIGHT/2);
+        // }
+        // else
+        // {
+        //     cY = (r2->height/2 + dB)/(P_HEIGHT/2);
+        // }
 
-        r1->velY += cY;
+        // r1->velY += cY;
     }
 }
 
