@@ -13,14 +13,16 @@
 
 #define DISTANCE_SIDE 50
 
-#define BALLSPEEDX 5
-#define BALLSPEEDY 8
+#define BALLSPEEDX 3
+#define BALLSPEEDY 5
 #define PADDLESPEED 5
 
-#define DO_AI 1
+#define WIN_POINTS 11
+
+#define DO_AI 0
 #define AI_LOOKAHEAD 5
 
-int points1 = 0, points2 = 0;
+int points1, points2, won = 0;
 
 typedef struct Ball
 {
@@ -84,7 +86,7 @@ void moveAI(Paddle *p, float dt)
 
     for (int iter = 0; iter < AI_LOOKAHEAD; iter++)
     {
-        // do da calculation
+        // do da calculation = 0, points2 = 0;
         i = (xP - xB) / vxB;
 
         // now check the y position of the ball at that point
@@ -196,8 +198,8 @@ void resolveCollision(Ball *r1, Paddle *r2)
 
 void reset(void)
 {
-    ball.aabb = (Rectangle){W_WIDTH/2-B_WIDTH/2, W_HEIGHT/2-B_HEIGHT/2, B_WIDTH, B_HEIGHT};
     ball.velX = ball.velY = 0;
+    ball.aabb = (Rectangle){W_WIDTH/2-B_WIDTH/2, W_HEIGHT/2-B_HEIGHT/2, B_WIDTH, B_HEIGHT};
     // left of center
     paddleLeft = (Rectangle){DISTANCE_SIDE, W_HEIGHT/2-P_HEIGHT/2, P_WIDTH, P_HEIGHT};
     // right of center
@@ -230,11 +232,22 @@ void moveBall(float dt)
         ball.aabb.y = W_HEIGHT - ball.aabb.height;
         ball.velY *= -1;
     }
+
+    if (points1 >= WIN_POINTS || points2 >= WIN_POINTS)
+        won = 1;
+}
+
+void newGame(void)
+{
+    reset();
+
+    points1 = points2 = 0;
+    won = 0;
 }
 
 int main(void)
 {
-    reset();
+    newGame();
 
     InitWindow(W_WIDTH, W_HEIGHT, "Who called it table tennis?");
     SetTargetFPS(60);
@@ -272,6 +285,8 @@ int main(void)
 
         if (IsKeyPressed(KEY_SPACE) && ball.velX == 0 && ball.velY == 0)
         {
+            if (won)
+                newGame();
             ball.velX = GetRandomValue(0, 1) > .5 ? BALLSPEEDX : -BALLSPEEDX;
             ball.velY = GetRandomValue(0, 1) > .5 ? BALLSPEEDY : -BALLSPEEDY;
         }
@@ -299,8 +314,18 @@ int main(void)
         DrawLine(W_WIDTH/2, 0, W_WIDTH/2, W_HEIGHT, WHITE);
 
         // draw score in the middle of each side of the screen
-        DrawText(TextFormat("%d", points1), W_WIDTH/2+W_WIDTH/2/2, 100, 60, WHITE);
-        DrawText(TextFormat("%d", points2), W_WIDTH/2-W_WIDTH/2/2, 100, 60, WHITE);
+        if (!won)
+        {
+            DrawText(TextFormat("%d", points1), W_WIDTH/2+W_WIDTH/2/2, 100, 60, WHITE);
+            DrawText(TextFormat("%d", points2), W_WIDTH/2-W_WIDTH/2/2, 100, 60, WHITE);
+        }
+        else
+        {
+            if (points1 > points2)
+                DrawText("Won", W_WIDTH/2+W_WIDTH/2/2, 100, 60, WHITE);
+            else if (points1 < points2)
+                DrawText("Won", W_WIDTH/2-W_WIDTH/2/2, 100, 60, WHITE);
+        }
 
         EndDrawing();
     }
