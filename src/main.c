@@ -135,6 +135,7 @@ void resolveCollision(Ball *r1, Paddle *r2)
     // I wrote this function some time ago and have since
     // completely forgotten how it works, but it seems to do fine lol
 
+    // If the two entities aren't touching eachother, do nothing
     if (
         r1->aabb.x + r1->aabb.width <= r2->x ||
         r1->aabb.x >= r2->x + r2->width ||
