@@ -5,6 +5,8 @@
 #define W_WIDTH 600
 #define W_HEIGHT 600
 
+#define TARGETFPS 60
+
 #define P_WIDTH 15
 #define P_HEIGHT 80
 
@@ -19,7 +21,7 @@
 
 #define WIN_POINTS 11
 
-// change to 1 for only right ai, 2> for left and right ai
+// change to 1 for only right ai, 2 for left and right ai
 #define DO_AI 2
 
 // change to 1 for easier AI, won't look ahead multiple bounces
@@ -254,22 +256,19 @@ int main(void)
     newGame();
 
     InitWindow(W_WIDTH, W_HEIGHT, "Who called it table tennis?");
-    SetTargetFPS(60);
+    SetTargetFPS(TARGETFPS);
 
-    float targetTimeMilliseconds = 1000 / 60;
-    
+    float targetFrameTime = 1000 /TARGETFPS;
+
     while (!WindowShouldClose())
     {
-        // GetFrameTime to milliseconds divided by the desired milliseconds, giving a number close to one to scale things up with a bit nicer
-        float deltatime = GetFrameTime() * 1000 / targetTimeMilliseconds;
+        // map from 0 to 1
+        float deltatime = GetFrameTime() * 1000 / targetFrameTime;
 
         // get user input
 
-        // move paddle right
         if (DO_AI >= 1)
             moveAI(&paddleRight, deltatime);
-        if (DO_AI >= 2)
-            moveAI(&paddleLeft, deltatime);
         else
         {
             if (IsKeyDown(KEY_UP))
@@ -278,11 +277,15 @@ int main(void)
                 movePaddle(&paddleRight, 1, deltatime);
         }
 
-        // move paddle left
-        if (IsKeyDown(KEY_W))
-            movePaddle(&paddleLeft, -1, deltatime);
-        if (IsKeyDown(KEY_S))
-            movePaddle(&paddleLeft, 1, deltatime);
+        if (DO_AI >= 2)
+            moveAI(&paddleLeft, deltatime);
+        else
+        {
+            if (IsKeyDown(KEY_W))
+                movePaddle(&paddleLeft, -1, deltatime);
+            if (IsKeyDown(KEY_S))
+                movePaddle(&paddleLeft, 1, deltatime);
+        }
 
         if ((IsKeyPressed(KEY_SPACE) || DO_AI >= 2) && ball.velX == 0 && ball.velY == 0)
         {

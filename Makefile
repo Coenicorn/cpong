@@ -1,32 +1,48 @@
-# EDIT THIS TO MATCH YOUR COMPILER PATH, THIS IS FOR LINUX RIGHT NOW
-CC := /usr/bin/gcc
+# edit this to point to your preferred compiler
+#
+# makefile template expects filesystem like so:
+# 
+# parent dir
+# 	- src
+# 		- main.c
+# 	- bin
+# 		- libmylibrary.a
+# 	- lib
+# 		- mylibrary.h
+# 	- obj
+# 	- build
+
+CC := /usr/bin/clang
 
 EXEC := ./build/main.out
 
 SRCDIR := ./src
-
-BINDIR := ./bin
+OBJDIR := ./obj
+INCLUDEDIR := ./include
 LIBDIR := ./lib
 
-CFLAGS := -Wall -g -I$(SRCDIR)/ -I$(LIBDIR)/
-LFLAGS := -L$(SRCDIR)/ -L$(BINDIR)/
-LDFLAGS := -lraylib -ldl -lGL -lpthread -lm
+CFLAGS := -Wall -Wextra -g -I$(SRCDIR)/ -I$(INCLUDEDIR)/
+LFLAGS := -L$(SRCDIR)/ -L$(LIBDIR)/
+LDFLAGS := -lraylib -lGL -ldl -lpthread -lm
 
-SRCS := $(shell find $(SRCDIR) -name *.c)
-OBJS := $(SRCS:.c=.o)
+OBJS := $(wildcard $(SRCDIR)/*.c)
+OBJS := $(OBJS:.c=.o)
+OBJS := $(subst $(SRCDIR)/,$(OBJDIR)/,$(OBJS))
 
-RM := rm -rf
 MKDIR := mkdir -p
-
-%.o: %.c
-	$(CC) $< $(CFLAGS) -c -o $@
+RM := rm -rf
 
 $(EXEC): $(OBJS)
 	$(MKDIR) $(@D)
 	$(CC) $^ $(CFLAGS) $(LFLAGS) -o $(EXEC) $(LDFLAGS)
-	$(MAKE) clean
 
-build: $(EXEC)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) -c $< $(CFLAGS) -o $@
+
+run: $(EXEC)
+	@clear
+	$(EXEC)
 
 clean:
-	$(RM) $(SRCDIR)/*.o
+	$(RM) $(EXEC)
+	$(RM) $(OBJS)
